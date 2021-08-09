@@ -25,10 +25,10 @@ def create_db_table():
 
     except sqlite3.Error as error:
         print("Error while creating a sqlite table", error)
-    finally:
-        if sqliteConnection:
-            sqliteConnection.close()
-            print("sqlite connection is closed")
+    # finally:
+    #     if sqliteConnection:
+    #         sqliteConnection.close()
+    #         print("sqlite connection is closed")
 
 
 

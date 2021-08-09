@@ -8,12 +8,12 @@ def get_data_from_db(database):
         sqlite_select_Query = "SELECT * FROM superAPI_products ORDER BY RANDOM() LIMIT 5;"
         cursor.execute(sqlite_select_Query)
         record = cursor.fetchall()
-        print(record)
         cursor.close()
+        return record
 
     except sqlite3.Error as error:
         print("Error while connecting to sqlite", error)
-    finally:
-        if sqliteConnection:
-            sqliteConnection.close()
-            print("The SQLite connection is closed")
+    # finally:
+    #     if sqliteConnection:
+    #         sqliteConnection.close()
+    #         print("The SQLite connection is closed")
