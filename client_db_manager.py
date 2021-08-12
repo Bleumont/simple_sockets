@@ -4,8 +4,8 @@ import sys
 
 def create_db_table():
     try:
-        sqliteConnection = sqlite3.connect('market_saved_data.db')
-        sqlite_create_table_query = f'''CREATE TABLE Products (
+        sqliteConnection = sqlite3.connect('market_saved_data.sqlite3')
+        sqlite_create_table_query = f'''CREATE TABLE IF NOT EXISTS Products (
                                     id INTEGER PRIMARY KEY,
                                     provider_name TEXT NOT NULL UNIQUE,
                                     product_name TEXT NOT NULL,
@@ -13,7 +13,7 @@ def create_db_table():
                                     buying_price REAL NOT NULL,
                                     selling_price REAL NOT NULL,
                                     bulk_price REAL NOT NULL,
-                                    price_date datetime);'''
+                                    price_date TEXT NOT NULL);'''
 
         cursor = sqliteConnection.cursor()
         print("Successfully Connected to SQLite")
@@ -32,17 +32,18 @@ def create_db_table():
 
 
 
-def insert_values(b_price, s_price, blk_price, category, name, provider_id, date):
+def insert_values(id, buying_price, selling_price, product_category, bulk_price, product_name, provider_name):
     try:
-        sqliteConnection = sqlite3.connect('market_saved_data.db')
+        sqliteConnection = sqlite3.connect('market_saved_data.sqlite3')
         cursor = sqliteConnection.cursor()
         print("Connected... OK")
+        price_date = "testing"
 
-        sqlite_insert_query = f"""INSERT INTO superAPI_products
-                            (buying_price, selling_price, bulk_price, product_category, product_name, provider_id, price_date) 
-                          VALUES ({b_price},{s_price},{blk_price},{category},{name},{provider_id},{date});"""
+        sqlite_insert_query = f"""INSERT INTO Products
+                            (id, provider_name, selling_price, buying_price, product_category, bulk_price, product_name,  price_date) 
+                          VALUES (NULL,{provider_name} ,{selling_price}, {buying_price}, {product_category}, {bulk_price}, {product_name},  {price_date});"""
 
-        count = cursor.execute(sqlite_insert_query)
+        cursor.execute(sqlite_insert_query)
         sqliteConnection.commit()
         print("Record inserted... ", cursor.rowcount)
         cursor.close()

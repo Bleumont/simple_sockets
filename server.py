@@ -1,8 +1,9 @@
 import asyncio
 from asyncio.windows_events import NULL
+from json import dumps
 import websockets
 import random 
-import json
+import pickle
 from server_db_manager import get_data_from_db
 
 async def hello(websocket, path):
@@ -12,11 +13,14 @@ async def hello(websocket, path):
             if message == 'KeyorSomething':
                 print(message)
                 print(f"Sending data to {websocket.remote_address[0]}")
-                await websocket.send("Connected... wait for data...")
+                # await websocket.send("Connected... wait for data...")
                 while websocket != NULL:
-                    data = get_data_from_db('db.sqlite3') 
-                    await websocket.send(json.dumps(data))
-                    print(type(data))
+                    data = get_data_from_db('db.sqlite3')
+     
+                    for item in data:
+                        await websocket.send(pickle.dumps(item))
+                        print(item)
+                   
                     await asyncio.sleep(random.random() * 5)
     except websockets.exceptions.ConnectionClosed as msg:
         print(f"{websocket.remote_address[0]} disconnected, {msg}")
