@@ -1,13 +1,14 @@
 import sqlite3
 import traceback
 import sys
+import datetime
 
 def create_db_table():
     try:
         sqliteConnection = sqlite3.connect('market_saved_data.sqlite3')
-        sqlite_create_table_query = f'''CREATE TABLE IF NOT EXISTS Products (
+        sqlite_create_table_query = f'''CREATE TABLE IF NOT EXISTS products (
                                     id INTEGER PRIMARY KEY,
-                                    provider_name TEXT NOT NULL UNIQUE,
+                                    provider_name TEXT NOT NULL,
                                     product_name TEXT NOT NULL,
                                     product_category TEXT NOT NULL,
                                     buying_price REAL NOT NULL,
@@ -25,27 +26,16 @@ def create_db_table():
 
     except sqlite3.Error as error:
         print("Error while creating a sqlite table", error)
-    # finally:
-    #     if sqliteConnection:
-    #         sqliteConnection.close()
-    #         print("sqlite connection is closed")
 
-
-
-def insert_values(id, buying_price, selling_price, product_category, bulk_price, product_name, provider_name):
+def insert_values(id, buying_price, selling_price, product_category, product_name, bulk_price, provider_name):
     try:
         sqliteConnection = sqlite3.connect('market_saved_data.sqlite3')
         cursor = sqliteConnection.cursor()
-        print("Connected... OK")
-        price_date = "testing"
+        price_date = datetime.datetime.now()
 
-        sqlite_insert_query = f"""INSERT INTO Products
-                            (id, provider_name, selling_price, buying_price, product_category, bulk_price, product_name,  price_date) 
-                          VALUES (NULL,{provider_name} ,{selling_price}, {buying_price}, {product_category}, {bulk_price}, {product_name},  {price_date});"""
-
-        cursor.execute(sqlite_insert_query)
+        cursor.execute(f"""INSERT INTO products (provider_name, product_name, product_category, buying_price, selling_price, bulk_price, price_date)
+                          VALUES ('{provider_name}', '{product_name}', '{product_category}', {buying_price}, {selling_price}, {bulk_price}, '{price_date}' );""")
         sqliteConnection.commit()
-        print("Record inserted... ", cursor.rowcount)
         cursor.close()
 
     except sqlite3.Error as error:
@@ -58,4 +48,3 @@ def insert_values(id, buying_price, selling_price, product_category, bulk_price,
     finally:
         if (sqliteConnection):
             sqliteConnection.close()
-            print("Connection closed...")
